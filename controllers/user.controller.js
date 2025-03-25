@@ -113,9 +113,6 @@ const AllPost = async (req, res) => {
   res.render("home", { post });
 };
 
-// const newPost = async (req,res)=>{
-//   res.render("AllPost")
-// }
 
 module.exports = {
   register,
