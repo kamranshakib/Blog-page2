@@ -84,7 +84,7 @@ span {
 }
 
 .container .center {
-  width: 47%;
+  width: 600px;
 
   height: 500px;
   transform: translateY(10px);
@@ -246,4 +246,34 @@ h3 {
   .container {
     margin-top: 10%;
   }
+}
+
+
+
+@media (max-width:1000px) {
+  .container .right{
+    display: none;
+  }
+  .container{
+    display: grid;
+    grid-template-columns: 50% 50%;
+    position: relative;
+   
+  }
+  .center{
+    position: absolute;
+    left: 20px;
+    width: 70%;
+    
+    
+  }
+  .left{
+    position: absolute;
+    right: 20px;
+   
+  }
+  .container{
+    width: 100%;
+  }
+  
 }
