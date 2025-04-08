@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پست‌های کاربران</title>   
-  <link rel="stylesheet" href="/fontawesome-free-6.6.0-web/css/all.min.css" />
+    <title>پست‌های کاربران</title>
+    <link rel="stylesheet" href="/fontawesome-free-6.6.0-web/css/all.min.css" />
     <style>
         body {
             font-family: "dana";
-           background: #1F2131;
+            background: #1F2131;
             display: flex;
             justify-content: center;
             direction: rtl;
@@ -16,54 +16,11 @@
         .post-container {
             width: 79%;
             margin: 100px 0;
-          background-color: #1c08086c;
+            background-color: #1c08086c;
             border-radius: 10px;
             padding: 5px;
             color: white;
         }
-
-
-        
-.navabr {
-    width: 80%;
-    height: 60px;
-    background: linear-gradient(50deg, #1c08086c 47.5%, #1c08082f 45% );
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10%;
-    margin-left: auto;
-    margin-right: auto;
-    position: fixed;
-    top: 0;
-    right: 10%;
-    left: 10%;
-    z-index: 5;
-    color: #e2e2e2a3;
-    border-radius: 0px 0px 20px 20px;
-    backdrop-filter: blur(20px);
-
-
-}
-
-.homeIcon {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 3px;
-}
-
-.myblogIcon {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 3px;
-
-}
-
-
         .post {
             background: #1F2131;
             padding: 15px;
@@ -91,10 +48,6 @@
         .post-header .user-info strong {
             font-size: 16px;
         }
-        .post-header .user-info span {
-            font-size: 12px;
-            color: gray;
-        }
         .post-content img {
             width: 100%;
             border-radius: 8px;
@@ -115,34 +68,26 @@
         }
         .like-button i {
             margin-left: 5px;
-        }   
-        a{
+        }
+        a {
             text-decoration: none;
             color: white;
         }
     </style>
 </head>
 <body>
-     <div class="navabr">
-      <div  class="homeIcon"><i class="fas fa-home"></i> <span><a href="/AllPost">Home</a></span></div>
-      <div class="myblogIcon" style="transform: translateX(-30px);">
-        <i  class="fas fa-user"></i><span ><a  href="/profile">Profile</a></span>
-      </div>
-    </div>
-
     <div class="post-container">
         <% post.reverse().forEach(user => { %> 
             <% user.posts.forEach(post => { %>  
-                <div class="post">
+                <div class="post" id="post-<%= post._id %>">
                     <div class="post-header">
                         <% if(user.profPhoto){ %>
-                        <img src="<%= user.profPhoto %>" alt="User Profile">
-                        <% }else{ %>
+                            <img src="<%= user.profPhoto %>" alt="User Profile">
+                        <% } else { %>
                             <img src="/Images/profile.png" alt="User Profile">
-                            <% } %>
+                        <% } %>
                         <div class="user-info">
                             <strong style="font-size: 25px;"><%= user.name %></strong>
-                           
                         </div>
                     </div>
                     <div class="post-content">
@@ -152,12 +97,42 @@
                         <% } %>
                     </div>
                     <div class="post-footer">
-                        <span class="like-button"><i class="fa fa-thumbs-up"></i> لایک</span>
+                        <p id="like-count-<%= post._id %>"><%= post.likes.length %> Likes</p>
+                        <button class="like-button" onclick="likePost('<%= post._id %>')">
+                            <i class="<%= post.likes.indexOf(user._id) === -1 ? 'fas fa-thumbs-up' : 'fas fa-thumbs-down' %>"></i>
+                            <span><%= post.likes.indexOf(user._id) === -1 ? "Like" : "Unlike" %></span>
+                        </button>
                     </div>
                 </div>
             <% }) %>
         <% }) %>
     </div>
 
+    <script>
+        async function likePost(postId) {
+            const res = await fetch(`/like/${postId}`, {
+                method: 'POST'
+            });
+            const data = await res.json();
+
+            // به‌روزرسانی تعداد لایک‌ها و وضعیت دکمه لایک
+            const likeCountElem = document.getElementById(`like-count-${postId}`);
+            const likeButtonElem = document.querySelector(`#post-${postId} .like-button`);
+            const iconElem = likeButtonElem.querySelector('i');
+            const spanElem = likeButtonElem.querySelector('span');
+
+            likeCountElem.textContent = `${data.likes.length} Likes`;
+
+            if (data.isLiked) {
+                iconElem.classList.remove('fa-thumbs-up');
+                iconElem.classList.add('fa-thumbs-down');
+                spanElem.textContent = "Unlike";
+            } else {
+                iconElem.classList.remove('fa-thumbs-down');
+                iconElem.classList.add('fa-thumbs-up');
+                spanElem.textContent = "Like";
+            }
+        }
+    </script>
 </body>
 </html>

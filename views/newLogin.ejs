@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود و ثبت‌نام</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 300px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .form-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- فرم ورود -->
+        <div class="form-box" id="loginBox">
+            <h2>ورود</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="ایمیل" required>
+                <input type="password" id="loginPassword" placeholder="رمز عبور" required>
+                <button type="submit">ورود</button>
+                <p>حساب نداری؟ <a href="#" onclick="toggleForms()">ثبت‌نام کن</a></p>
+            </form>
+        </div>
+
+        <!-- فرم ثبت‌نام -->
+        <div class="form-box hidden" id="registerBox">
+            <h2>ثبت‌نام</h2>
+            <form id="registerForm">
+                <input type="text" id="registerName" placeholder="نام" required>
+                <input type="email" id="registerEmail" placeholder="ایمیل" required>
+                <input type="text" id="registerPhone" placeholder="شماره تلفن" required>
+                <input type="password" id="registerPassword" placeholder="رمز عبور" required>
+                <button type="submit">ثبت‌نام</button>
+                <p>حساب داری؟ <a href="#" onclick="toggleForms()">وارد شو</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // تغییر بین فرم‌ها
+        function toggleForms() {
+            document.getElementById('loginBox').classList.toggle('hidden');
+            document.getElementById('registerBox').classList.toggle('hidden');
+        }
+
+        // ارسال اطلاعات ثبت‌نام به سرور
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const password = document.getElementById('registerPassword').value;
+
+            const data = {
+                name,
+                email,
+                phone,
+                password
+            };
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('ثبت‌نام با موفقیت انجام شد!');
+                    toggleForms();
+                } else {
+                    alert(result.msg || 'خطا در ثبت‌نام');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // ارسال اطلاعات ورود به سرور
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const data = {
+                email,
+                password
+            };
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/profile'; // هدایت به پروفایل کاربر پس از ورود موفق
+                } else {
+                    alert(result.msg || 'خطا در ورود');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
