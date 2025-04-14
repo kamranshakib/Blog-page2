@@ -15,20 +15,20 @@ const {
   likess
 } = require("../controllers/user.controller");
 
-// بررسی لاگین بودن کاربر
+ 
 function inLoggedin(req, res, next) {
   const token = req.cookies.token;
 
   if (!token) {
-    return res.redirect("/login"); // اگر توکن نبود، کاربر را به لاگین بفرست
+    return res.redirect("/login"); 
   }
 
   jwt.verify(token, process.env.PRIMARY_KEY, (err, decoded) => {
     if (err) {
-      res.clearCookie("token"); // حذف توکن منقضی شده
-      return res.redirect("/login"); // هدایت به لاگین
+      res.clearCookie("token");
+      return res.redirect("/login"); 
     }
-    req.user = decoded; // ذخیره اطلاعات کاربر در `req.user`
+    req.user = decoded; 
     next();
   });
 }
